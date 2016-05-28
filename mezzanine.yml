@@ -33,7 +33,7 @@
   tasks:
     - name: install apt packages
       apt: pkg={{ item }} update_cache=yes cache_valid_time=3600
-      sudo: True
+      become: True
       with_items:
         - nginx
         - libjpeg-dev
@@ -74,8 +74,8 @@
       postgresql_user:
         name: "{{ database_user }}"
         password: "{{ db_pass }}"
-      sudo: True
-      sudo_user: postgres
+      become: True
+      become_user: postgres
 
     - name: create the database
       postgresql_db:
@@ -85,8 +85,8 @@
         lc_ctype: "{{ locale }}"
         lc_collate: "{{ locale }}"
         template: template0
-      sudo: True
-      sudo_user: postgres
+      become: True
+      become_user: postgres
 
     - name: generate the settings file
       template: src=templates/local_settings.py.j2 dest={{ proj_path }}/{{ proj_name }}/local_settings.py
@@ -120,12 +120,12 @@
 
     - name: set the supervisor config file
       template: src=templates/supervisor.conf.j2 dest=/etc/supervisor/conf.d/mezzanine.conf
-      sudo: True
+      become: True
       notify: restart supervisor
 
     - name: set the nginx config file
       template: src=templates/nginx.conf.j2 dest=/etc/nginx/sites-available/mezzanine.conf
-      sudo: True
+      become: True
       notify: restart nginx
 
     - name: enable the nginx config file
@@ -133,17 +133,17 @@
         src: /etc/nginx/sites-available/mezzanine.conf
         dest: /etc/nginx/sites-enabled/mezzanine.conf
         state: link
-      sudo: True
+      become: True
       notify: restart nginx
 
     - name: remove the efault nginx config file
       file: path=/etc/nginx/sites-enabled/default state=absent
-      sudo: True
+      become: True
       notify: restart nginx
 
     - name: ensure config path exists
       file: path={{ conf_path }} state=directory
-      sudo: True
+      become: True
       when: tls_enabled
 
     - name: create ssl certificates
@@ -152,15 +152,15 @@
         -keyout {{ proj_name }}.key -subj '/CN={{ domains[0] }}' -days 3650
         chdir={{ conf_path }}
         creates={{ conf_path }}/{{ proj_name }}.crt
-      sudo: True
+      become: True
       when: tls_enabled
       notify: restart nginx
 
   handlers:
     - name: restart supervisor
       supervisorctl: name=gunicorn_mezzanine state=restarted
-      sudo: True
+      become: True
 
     - name: restart nginx
       service: name=nginx state=restarted
-      sudo: True
+      become: True

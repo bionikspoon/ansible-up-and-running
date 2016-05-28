@@ -3,4 +3,4 @@ private_key
 *.key
 *.retry
 config.cson
-secrets.yml
+.vault_pass.txt
