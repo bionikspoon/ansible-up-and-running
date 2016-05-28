@@ -1,0 +1,9 @@
+#! /usr/bin/env ansible-playbook
+
+- name: show return value of command module
+  hosts: vagrant
+  tasks:
+    - name: capture output of id command
+      command: id -un
+      register: login
+    - debug: msg="Logged in as user {{ login.stdout }}"
