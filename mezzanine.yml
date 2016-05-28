@@ -9,6 +9,7 @@
     venv_path: "{{ venv_home }}/{{ proj_name }}"
     proj_dirname: project
     proj_path: "{{ venv_path }}/{{ proj_dirname }}"
+    proj_logs: "{{ venv_path }}/logs"
     reqs_path: requirements.txt
     manage: "{{ python }} {{ proj_path }}/manage.py"
     live_hostname: 192.168.33.10.xip.io
@@ -20,6 +21,7 @@
     locale: en_US.UTF-8
     conf_path: /etc/nginx/conf
     tls_enabled: true
+    ssl_disabled: "{{ '' if tls_enabled  else '# ' }}"
     python: "{{ venv_path }}/bin/python"
     database_name: "{{ proj_name }}"
     database_user: "{{ proj_name }}"
@@ -33,21 +35,22 @@
       apt: pkg={{ item }} update_cache=yes cache_valid_time=3600
       sudo: True
       with_items:
-        - git
+        - nginx
         - libjpeg-dev
+        - python-dev
+        - python-setuptools
+        - git-core
+        - postgresql
         - libpq-dev
         - memcached
-        - nginx
-        - postgresql
-        - python-dev
-        - python-pip
-        - python-psycopg2
-        - python-setuptools
-        - python-virtualenv
         - supervisor
+        - python-pip
 
-    - name: ensure ~/.ssh directort exists
+    - name: ensure ~/.ssh directory exists
       file: path=~/.ssh state=directory
+
+    - name: ensure log directory exists
+      file: path={{ proj_logs }} state=directory
 
     - name: copy known hosts
       copy: src=files/known_hosts dest=~/.ssh/known_hosts mode=0600

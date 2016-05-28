@@ -1,7 +1,8 @@
 from __future__ import unicode_literals
 import multiprocessing
 
-bind = "127.0.0.1:{{ gunicorn_port }}"
+bind = "unix:{{ proj_path }}/gunicorn.sock"
 workers = multiprocessing.cpu_count() * 2 + 1
+errorlog = "{{ proj_logs }}/{{ proj_name }}_error.log"
 loglevel = "error"
-proc_name = "{{ proj_name }}"
+proc_name = "{{ gunicorn_proc_name }}"
