@@ -1,0 +1,8 @@
+---
+- name: restart supervisor
+  supervisorctl: name=gunicorn_{{ mezzanine_proj_name }} state=restarted
+  become: True
+
+- name: restart nginx
+  service: name=nginx state=restarted
+  become: True

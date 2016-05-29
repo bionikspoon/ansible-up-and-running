@@ -1,0 +1,26 @@
+---
+- name: install apt packages
+  apt: pkg={{ item }} update_cache=yes cache_valid_time=3600
+  become: True
+  with_items:
+    - postgresql
+    - libpq-dev
+    - python-psycopg2
+
+- name: create a user
+  postgresql_user:
+    name: "{{ database_user }}"
+    password: "{{ db_pass }}"
+  become: True
+  become_user: postgres
+
+- name: create the database
+  postgresql_db:
+    name: "{{ database_name }}"
+    owner: "{{ database_user }}"
+    encoding: UTF-8
+    lc_ctype: "{{ locale }}"
+    lc_collate: "{{ locale }}"
+    template: template0
+  become: True
+  become_user: postgres

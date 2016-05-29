@@ -136,7 +136,7 @@
       become: True
       notify: restart nginx
 
-    - name: remove the efault nginx config file
+    - name: remove the default nginx config file
       file: path=/etc/nginx/sites-enabled/default state=absent
       become: True
       notify: restart nginx

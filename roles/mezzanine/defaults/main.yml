@@ -1,0 +1,3 @@
+---
+tls_enabled: true
+ssl_disabled: "{{ '' if tls_enabled  else '# ' }}"

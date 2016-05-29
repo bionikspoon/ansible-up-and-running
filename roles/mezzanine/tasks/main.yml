@@ -1,0 +1,27 @@
+---
+- name: ensure ~/.ssh directory exists
+  file: path=~/.ssh state=directory
+
+- name: ensure log directory exists
+  file: path={{ mezzanine_proj_logs }} state=directory
+
+- name: copy known hosts
+  copy: src=known_hosts dest=~/.ssh/known_hosts mode=0600
+
+- name: install apt packages
+  apt: pkg={{ item }} update_cache=yes cache_valid_time=3600
+  become: True
+  with_items:
+    - git-core
+    - libjpeg-dev
+    - memcached
+    - nginx
+    - python-dev
+    - python-setuptools
+    - python-pip
+    - python-virtualenv
+    - postgresql
+    - supervisor
+
+- include: django.yml
+- include: nginx.yml

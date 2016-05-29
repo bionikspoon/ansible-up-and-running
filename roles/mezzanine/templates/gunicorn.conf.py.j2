@@ -1,0 +1,8 @@
+from __future__ import unicode_literals
+import multiprocessing
+
+bind = "unix:{{ mezzanine_proj_path }}/gunicorn.sock"
+workers = multiprocessing.cpu_count() * 2 + 1
+errorlog = "{{ mezzanine_proj_logs }}/{{ mezzanine_proj_name }}_error.log"
+loglevel = "error"
+proc_name = "{{ mezzanine_proj_name }}"
